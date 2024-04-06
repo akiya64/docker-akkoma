@@ -10,16 +10,18 @@ services:
     env_file: db.env
     volumes:
       - ./postgres:/var/lib/postgresql/data
+    networks:
+      default:
 
   web:
     image: akkoma
     container_name: akkoma_web
     healthcheck:
-      test: [ "CMD-SHELL", "wget -q --spider --proxy=off localhost:4000 || exit 1" ]
+      test: [ "CMD-SHELL", "wget -q --spider --proxy=off localhost:4001 || exit 1" ]
     restart: always
     ports:
       # Remove this if you're not exposing this to your local network
-      - '4000:4000'
+      - '4001:4000'
     build:
       context: build
       # Feel free to remove or override this section. The variables set below are
@@ -35,9 +37,21 @@ services:
     env_file:
       - db.env
     environment:
-      DOMAIN: example.com
+      DOMAIN: autumnsky.jp
       INSTANCE_NAME: Akkoma
-      ADMIN_EMAIL: admin@example.com
-      NOTIFY_EMAIL: notify@example.com
+      ADMIN_EMAIL: autumnsky64@gmail.com
+      NOTIFY_EMAIL: autumnsky64@gmail.com
+      VIRTUAL_HOST: autumnsky.jp
+      LETSENCRYPT_HOST: autumnsky.jp
     depends_on:
       - db
+
+    networks:
+      default:
+      reverse-proxy-network:
+        aliases:
+          - akkoma
+
+networks:
+  reverse-proxy-network:
+    external: true
