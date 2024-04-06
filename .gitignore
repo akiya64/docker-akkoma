@@ -1,4 +1,4 @@
 uploads/
-static/
 postgres/
+static/*/
 config/
